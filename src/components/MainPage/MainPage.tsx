@@ -1,12 +1,17 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import ImageCard from "./ImageCard";
+import Modal from "../../ui/Modal";
 
 const API_URL = "https://api.unsplash.com/search/photos";
 const API_KEY = process.env.REACT_APP_API_KEY;
 
 function MainPage() {
   const [popularPhotos, setPopularPhotos] = useState([]);
+
+  const [currentImage, setCurrentImage] = useState(null);
+
+  const [isOpenModal, setIsOpenModal] = useState(true);
 
   useEffect(() => {
     const fetchPopularPhotos = async () => {
@@ -30,21 +35,30 @@ function MainPage() {
     fetchPopularPhotos();
   }, []);
 
+  const handleImageClick = (imageId: any) => {
+    setIsOpenModal((isOpen) => !isOpen);
+    setCurrentImage(imageId);
+  };
+
   return (
     <main>
       <h1>Searchbar</h1>
       <section>
-        <input
-          // onChange={handleSearch}
-          type="search"
-          placeholder="search for images"
-        />
+        <input type="search" placeholder="search for images" />
       </section>
 
       <section>
         <div className="photo-grid">
           {popularPhotos.map((photo: any) => (
-            <ImageCard photo={photo} />
+            <div onClick={() => handleImageClick(photo.id)} key={photo.id}>
+              <img src={photo.urls.small} alt={photo.alt_description} />
+
+              {isOpenModal && currentImage === photo.id && (
+                <Modal onClose={() => setIsOpenModal(false)}>
+                  <p>{photo.id}</p>
+                </Modal>
+              )}
+            </div>
           ))}
         </div>
       </section>

@@ -62,31 +62,33 @@ function MainPage() {
     fetchPopularPhotos();
   }, [page]);
 
-  // // Fetch statistics for a photo
-  // useEffect(() => {
-  //   const fetchStatistics = async () => {
-  //     if (currentImage) {
-  //       try {
-  //         const response = await axios.get(
-  //           `${API_URL}/photos/${currentImage}/statistics`,
-  //           {
-  //             headers: {
-  //               Authorization: `Client-ID ${API_KEY}`,
-  //             },
-  //           }
-  //         );
-  //         setStatistics((prevStats) => ({
-  //           ...prevStats,
-  //           [currentImage]: response.data,
-  //         }));
-  //       } catch (error) {
-  //         console.error("Error fetching statistics:", error);
-  //       }
-  //     }
-  //   };
+  // Fetch statistics for a photo
+  useEffect(() => {
+    const fetchStatistics = async () => {
+      if (currentImage) {
+        try {
+          const response = await axios.get(
+            `https://api.unsplash.com/photos/${currentImage}/statistics`,
+            {
+              headers: {
+                Authorization: `Client-ID ${API_KEY}`,
+              },
+            }
+          );
 
-  //   fetchStatistics();
-  // }, [currentImage]);
+          setStatistics((prevStats) => ({
+            ...prevStats,
+            [currentImage]: response.data,
+          }));
+          console.log(response.data);
+        } catch (error) {
+          console.error("Error fetching statistics:", error);
+        }
+      }
+    };
+
+    fetchStatistics();
+  }, [currentImage]);
 
   //hide scroll while modal is open
   useEffect(() => {
@@ -125,7 +127,15 @@ function MainPage() {
               <div>
                 {isOpenModal && currentImage === photo.id && (
                   <Modal>
-                    <ImageCard photo={photo} />
+                    {/* <ImageCard photo={photo} /> */}
+                    <ImageCard
+                      photo={
+                        popularPhotos.find(
+                          (photo) => photo.id === currentImage
+                        )!
+                      }
+                      statistics={statistics[currentImage]}
+                    />
                   </Modal>
                 )}
               </div>

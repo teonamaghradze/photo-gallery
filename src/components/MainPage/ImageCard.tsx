@@ -1,21 +1,27 @@
-import React from "react";
-
 interface ImageCardProps {
-  photo: {
-    id: string;
-    urls: {
-      small: string;
+  photo: any;
+  statistics?: {
+    views?: {
+      total: number;
     };
-    alt_description: string;
-    likes: string;
+    downloads?: {
+      total: number;
+    };
   };
 }
 
-const ImageCard: React.FC<ImageCardProps> = ({ photo }) => {
+const ImageCard: React.FC<ImageCardProps> = ({ photo, statistics }) => {
+  const viewsTotal = statistics?.views?.total || 0;
+  const downloadsTotal = statistics?.downloads?.total || 0;
+
   return (
     <div className="image-card">
       <img src={photo.urls.small} alt={photo.alt_description} />
-      <p>{photo.likes}</p>
+      <div className="statistics">
+        <p>Likes: {photo.likes}</p>
+        <p>Views: {viewsTotal}</p>
+        <p>Downloads: {downloadsTotal}</p>
+      </div>
     </div>
   );
 };

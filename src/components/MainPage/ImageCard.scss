@@ -1,0 +1,35 @@
+h2 {
+  text-align: center;
+  width: 400px;
+  color: rgb(59, 57, 57);
+}
+
+.statistics {
+  background-color: orange;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  border-radius: 5px;
+
+  div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  div:not(:last-child) {
+    border-right: 3px solid rgb(249, 244, 244);
+    padding-right: 1rem;
+  }
+  h3 {
+    color: white;
+    margin-bottom: -10px;
+  }
+  p {
+    font-size: 13px;
+    color: rgb(66, 64, 64);
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+}

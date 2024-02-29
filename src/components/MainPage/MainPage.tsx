@@ -28,13 +28,13 @@ function MainPage() {
 
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
   const [currentImage, setCurrentImage] = useState<string | null>(null);
-  const [statistics, setStatistics] = useState<{ [id: string]: any }>({});
+  const [statistics, setStatistics] = useState<{ [id: string]: object }>({});
 
   const [searchInput, setSearchInput] = useState("");
-  const debouncedSearchInput = useDebounce<any>(searchInput);
+  const debouncedSearchInput = useDebounce<string>(searchInput);
 
   const [searchHistory, setSearchHistory] = useState<string[]>([]);
-  const [wordsArr, setWordsArr] = useState<any>([]);
+  const [wordsArr, setWordsArr] = useState<string[]>([]);
 
   const handleScrollRef = useRef(handleScroll(setPage));
   const handleFilteredScrollRef = useRef(handleScroll(setFilteredImgPage));
@@ -180,13 +180,13 @@ function MainPage() {
   };
 
   //find image with input search
-  const handleSearch = (e: any) => {
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchInput(e.target.value);
     const filtered = popularPhotos.filter((photo) =>
-      photo.alt_description.toLowerCase().includes(e.target.value)
+      photo.alt_description.toLowerCase().includes(e.target.value.toLowerCase())
     );
 
-    console.log(filtered);
     setFilteredPhotos(filtered);
   };
 
@@ -211,7 +211,7 @@ function MainPage() {
 
   //search images with rendered keywords
   const handleKeywordSearch = (e: React.MouseEvent<HTMLHeadingElement>) => {
-    const keyword: any = e.currentTarget.textContent;
+    const keyword: string = e.currentTarget.textContent || "";
     console.log(keyword);
     setSearchInput(keyword);
   };
@@ -219,18 +219,18 @@ function MainPage() {
   return (
     <main>
       <section>
-        <h1>Photo Gallery</h1>
+        {/* <h1>Photo Gallery</h1> */}
 
         <div className="search-section">
           <input
             type="search"
-            placeholder="Search for images"
+            placeholder="🔎  Search for images "
             className="search-input"
             onChange={handleSearch}
           />
         </div>
         <Link to="/history" className="history-link">
-          <h2>Go to history</h2>
+          <h2>Search history➡</h2>
         </Link>
       </section>
 

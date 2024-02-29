@@ -16,9 +16,12 @@ const ImageCard: React.FC<ImageCardProps> = ({ photo, statistics }) => {
 
   return (
     <div className="image-card">
-      <img src={photo.urls.small} alt={photo.alt_description} />
+      <img
+        src={photo?.urls?.small || photo?.urls?.full}
+        alt={photo?.alt_description}
+      />
       <div className="statistics">
-        <p>Likes: {photo.likes}</p>
+        <p>Likes: {photo?.likes}</p>
         <p>Views: {viewsTotal}</p>
         <p>Downloads: {downloadsTotal}</p>
       </div>

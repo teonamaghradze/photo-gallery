@@ -247,7 +247,7 @@ function MainPage() {
                       <Modal>
                         <ImageCard
                           photo={
-                            popularPhotos.find((p) => p.id === currentImage)!
+                            filteredPhotos.find((p) => p.id === currentImage)!
                           }
                           statistics={statistics[currentImage]}
                         />

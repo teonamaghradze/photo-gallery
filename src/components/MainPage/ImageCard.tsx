@@ -1,22 +1,23 @@
-interface Photo {
-  id: string;
-  urls: {
-    small: string;
-  };
-  alt_description: string;
-  likes: string;
-}
+import React from "react";
 
 interface ImageCardProps {
-  photo: Photo;
+  photo: {
+    id: string;
+    urls: {
+      small: string;
+    };
+    alt_description: string;
+    likes: string;
+  };
 }
 
 const ImageCard: React.FC<ImageCardProps> = ({ photo }) => {
   return (
-    <div>
-      <img src={photo.urls.small} key={photo.id} alt={photo.alt_description} />
-      <h1>{photo.likes}</h1>
+    <div className="image-card">
+      <img src={photo.urls.small} alt={photo.alt_description} />
+      <p>{photo.likes}</p>
     </div>
   );
 };
+
 export default ImageCard;

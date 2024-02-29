@@ -1,8 +1,9 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ImageCard from "./ImageCard";
 import Modal from "../../ui/Modal";
 import "./MainPage.scss";
+import { handleScroll } from "../../services/helpers";
 
 const API_URL = "https://api.unsplash.com/search/photos";
 const API_KEY = process.env.REACT_APP_API_KEY;
@@ -18,10 +19,25 @@ interface Photo {
 
 function MainPage() {
   const [popularPhotos, setPopularPhotos] = useState<Photo[]>([]);
-  const [currentImage, setCurrentImage] = useState<string | null>(null);
-  const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
   const [page, setPage] = useState<number>(1);
 
+  const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
+  const [currentImage, setCurrentImage] = useState<string | null>(null);
+  const [statistics, setStatistics] = useState<{ [id: string]: any }>({});
+
+  //INFINITE SCROLL
+  const handleScrollRef = useRef(handleScroll(setPage));
+
+  useEffect(() => {
+    const scrollListener = () => handleScrollRef.current();
+    window.addEventListener("scroll", scrollListener);
+
+    return () => {
+      window.removeEventListener("scroll", scrollListener);
+    };
+  }, []);
+
+  //Fetch POPULAR images
   useEffect(() => {
     const fetchPopularPhotos = async () => {
       try {
@@ -46,6 +62,33 @@ function MainPage() {
     fetchPopularPhotos();
   }, [page]);
 
+  // // Fetch statistics for a photo
+  // useEffect(() => {
+  //   const fetchStatistics = async () => {
+  //     if (currentImage) {
+  //       try {
+  //         const response = await axios.get(
+  //           `${API_URL}/photos/${currentImage}/statistics`,
+  //           {
+  //             headers: {
+  //               Authorization: `Client-ID ${API_KEY}`,
+  //             },
+  //           }
+  //         );
+  //         setStatistics((prevStats) => ({
+  //           ...prevStats,
+  //           [currentImage]: response.data,
+  //         }));
+  //       } catch (error) {
+  //         console.error("Error fetching statistics:", error);
+  //       }
+  //     }
+  //   };
+
+  //   fetchStatistics();
+  // }, [currentImage]);
+
+  //hide scroll while modal is open
   useEffect(() => {
     if (isOpenModal) {
       document.body.style.overflow = "hidden";
@@ -54,48 +97,17 @@ function MainPage() {
     }
   }, [isOpenModal]);
 
-  const handleScroll = () => {
-    const scrollTop =
-      (document.documentElement && document.documentElement.scrollTop) ||
-      document.body.scrollTop;
-    const scrollHeight =
-      (document.documentElement && document.documentElement.scrollHeight) ||
-      document.body.scrollHeight;
-    const clientHeight =
-      document.documentElement.clientHeight || window.innerHeight;
-    const scrolledToBottom =
-      Math.ceil(scrollTop + clientHeight) >= scrollHeight;
-
-    if (scrolledToBottom) {
-      setPage(page + 1);
-    }
-  };
-
-  useEffect(() => {
-    window.addEventListener("scroll", handleScroll);
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
-
+  //toggle modal image
   const handleImageClick = (imageId: string) => {
-    setIsOpenModal((isOpen) => !isOpen);
     setCurrentImage(imageId);
-  };
-
-  const handleSearch = (e: any) => {
-    console.log(e.target.value);
+    setIsOpenModal((isOpen) => !isOpen);
   };
 
   return (
     <main>
       <h1>Searchbar</h1>
       <section>
-        <input
-          type="search"
-          placeholder="search for images"
-          onChange={(e) => handleSearch(e)}
-        />
+        <input type="search" placeholder="search for images" />
       </section>
 
       <section>
@@ -103,16 +115,20 @@ function MainPage() {
           {popularPhotos.map((photo: Photo, index: number) => (
             <div
               onClick={() => handleImageClick(photo.id)}
+              //for 'Encountered two children with the same key' problem
               key={`${photo.id}-${index}`}
             >
               <div className="img-container">
                 <img src={photo.urls.small} alt={photo.alt_description} />
               </div>
-              {isOpenModal && currentImage === photo.id && (
-                <Modal>
-                  <ImageCard photo={photo} />
-                </Modal>
-              )}
+
+              <div>
+                {isOpenModal && currentImage === photo.id && (
+                  <Modal>
+                    <ImageCard photo={photo} />
+                  </Modal>
+                )}
+              </div>
             </div>
           ))}
         </div>

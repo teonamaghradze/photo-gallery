@@ -4,6 +4,8 @@ import ImageCard from "./ImageCard";
 import Modal from "../../ui/Modal";
 import "./MainPage.scss";
 import { handleScroll } from "../../services/helpers";
+import { Link } from "react-router-dom";
+import useDebounce from "./hooks/useDebounce";
 
 const API_URL = "https://api.unsplash.com/search/photos";
 const API_KEY = process.env.REACT_APP_API_KEY;
@@ -19,11 +21,44 @@ interface Photo {
 
 function MainPage() {
   const [popularPhotos, setPopularPhotos] = useState<Photo[]>([]);
+  const [filteredPhotos, setFilteredPhotos] = useState<Photo[]>([]);
+
   const [page, setPage] = useState<number>(1);
 
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
   const [currentImage, setCurrentImage] = useState<string | null>(null);
   const [statistics, setStatistics] = useState<{ [id: string]: any }>({});
+
+  const [searchInput, setSearchInput] = useState("");
+
+  const debouncedSearchInput = useDebounce(searchInput);
+
+  useEffect(() => {
+    const searchImages = async (query: string) => {
+      try {
+        const response = await axios.get(
+          `https://api.unsplash.com/search/photos`,
+          {
+            params: {
+              query: query,
+              per_page: 20,
+            },
+            headers: {
+              Authorization: `Client-ID ${API_KEY}`,
+            },
+          }
+        );
+
+        console.log(response.data);
+
+        return response.data;
+      } catch (error) {
+        console.error("Error fetching photos:", error);
+        return null;
+      }
+    };
+    searchImages("cat");
+  }, [debouncedSearchInput]);
 
   //INFINITE SCROLL
   const handleScrollRef = useRef(handleScroll(setPage));
@@ -105,42 +140,79 @@ function MainPage() {
     setIsOpenModal((isOpen) => !isOpen);
   };
 
+  //find image with input search
+  const handleSearch = (e: any) => {
+    setSearchInput(e.target.value);
+    const filtered = popularPhotos.filter((photo) =>
+      photo.alt_description.toLowerCase().includes(e.target.value)
+    );
+
+    console.log(filtered);
+    setFilteredPhotos(filtered);
+  };
+
   return (
     <main>
       <h1>Searchbar</h1>
+
+      <Link to="/history">
+        <h2>Go to history</h2>
+      </Link>
       <section>
-        <input type="search" placeholder="search for images" />
+        <input
+          type="search"
+          placeholder="search for images"
+          onChange={handleSearch}
+        />
       </section>
 
       <section>
         <div className="photo-grid">
-          {popularPhotos.map((photo: Photo, index: number) => (
-            <div
-              onClick={() => handleImageClick(photo.id)}
-              //for 'Encountered two children with the same key' problem
-              key={`${photo.id}-${index}`}
-            >
-              <div className="img-container">
-                <img src={photo.urls.small} alt={photo.alt_description} />
-              </div>
-
-              <div>
-                {isOpenModal && currentImage === photo.id && (
-                  <Modal>
-                    {/* <ImageCard photo={photo} /> */}
-                    <ImageCard
-                      photo={
-                        popularPhotos.find(
-                          (photo) => photo.id === currentImage
-                        )!
-                      }
-                      statistics={statistics[currentImage]}
-                    />
-                  </Modal>
-                )}
-              </div>
-            </div>
-          ))}
+          {searchInput === ""
+            ? popularPhotos.map((photo: Photo, index: number) => (
+                <div
+                  onClick={() => handleImageClick(photo.id)}
+                  key={`${photo.id}-${index}`}
+                >
+                  <div className="img-container">
+                    <img src={photo.urls.small} alt={photo.alt_description} />
+                  </div>
+                  <div>
+                    {isOpenModal && currentImage === photo.id && (
+                      <Modal>
+                        <ImageCard
+                          photo={
+                            popularPhotos.find((p) => p.id === currentImage)!
+                          }
+                          statistics={statistics[currentImage]}
+                        />
+                      </Modal>
+                    )}
+                  </div>
+                </div>
+              ))
+            : filteredPhotos.map((photo: Photo, index: number) => (
+                <div
+                  onClick={() => handleImageClick(photo.id)}
+                  key={`${photo.id}-${index}`}
+                >
+                  <div className="img-container">
+                    <img src={photo.urls.small} alt={photo.alt_description} />
+                  </div>
+                  <div>
+                    {isOpenModal && currentImage === photo.id && (
+                      <Modal>
+                        <ImageCard
+                          photo={
+                            popularPhotos.find((p) => p.id === currentImage)!
+                          }
+                          statistics={statistics[currentImage]}
+                        />
+                      </Modal>
+                    )}
+                  </div>
+                </div>
+              ))}
         </div>
       </section>
     </main>

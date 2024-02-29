@@ -3,17 +3,21 @@ import MainPage from "./components/MainPage/MainPage";
 import HistoryPage from "./components/HistoryPage/HistoryPage";
 import NotFoundPage from "./ui/NotFoundPage";
 
+// const queryClient = new QueryClient();
+
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        {/* Redirect from root to /main */}
-        <Route path="/" element={<Navigate to="/main" />} />
-        <Route path="/main" element={<MainPage />} />
-        <Route path="/history" element={<HistoryPage />} />
-        <Route path="*" element={<NotFoundPage />} />
-      </Routes>
-    </BrowserRouter>
+    <>
+      {/* <ReactQueryDevtools initialIsOpen={false} /> */}
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Navigate to="/main" />} />
+          <Route path="/main" element={<MainPage />} />
+          <Route path="/history" element={<HistoryPage />} />
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+      </BrowserRouter>
+    </>
   );
 }
 

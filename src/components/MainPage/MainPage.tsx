@@ -7,7 +7,6 @@ import { handleScroll } from "../../services/helpers";
 import { Link } from "react-router-dom";
 import useDebounce from "./hooks/useDebounce";
 
-const API_URL = "https://api.unsplash.com/search/photos";
 const API_KEY = process.env.REACT_APP_API_KEY;
 
 interface Photo {
@@ -30,10 +29,13 @@ function MainPage() {
   const [statistics, setStatistics] = useState<{ [id: string]: any }>({});
 
   const [searchInput, setSearchInput] = useState("");
+  const debouncedSearchInput = useDebounce<any>(searchInput);
 
-  const debouncedSearchInput = useDebounce(searchInput);
+  const [searchHistory, setSearchHistory] = useState<string[]>([]);
+  const [wordsArr, setWordsArr] = useState<any>([]);
 
   useEffect(() => {
+    // Fetch images based on search input
     const searchImages = async (query: string) => {
       try {
         const response = await axios.get(
@@ -49,30 +51,24 @@ function MainPage() {
           }
         );
 
-        console.log(response.data);
-
-        return response.data;
+        setFilteredPhotos(response.data.results);
       } catch (error) {
         console.error("Error fetching photos:", error);
-        return null;
       }
     };
-    searchImages("cat");
+
+    if (debouncedSearchInput) {
+      searchImages(debouncedSearchInput);
+      setSearchHistory((prevHistory) => [
+        ...prevHistory,
+        debouncedSearchInput.trim(),
+      ]);
+    } else {
+      setFilteredPhotos([]);
+    }
   }, [debouncedSearchInput]);
 
-  //INFINITE SCROLL
-  const handleScrollRef = useRef(handleScroll(setPage));
-
-  useEffect(() => {
-    const scrollListener = () => handleScrollRef.current();
-    window.addEventListener("scroll", scrollListener);
-
-    return () => {
-      window.removeEventListener("scroll", scrollListener);
-    };
-  }, []);
-
-  //Fetch POPULAR images
+  // Fetch POPULAR images
   useEffect(() => {
     const fetchPopularPhotos = async () => {
       try {
@@ -134,6 +130,18 @@ function MainPage() {
     }
   }, [isOpenModal]);
 
+  //INFINITE SCROLL
+  const handleScrollRef = useRef(handleScroll(setPage));
+
+  useEffect(() => {
+    const scrollListener = () => handleScrollRef.current();
+    window.addEventListener("scroll", scrollListener);
+
+    return () => {
+      window.removeEventListener("scroll", scrollListener);
+    };
+  }, []);
+
   //toggle modal image
   const handleImageClick = (imageId: string) => {
     setCurrentImage(imageId);
@@ -151,21 +159,56 @@ function MainPage() {
     setFilteredPhotos(filtered);
   };
 
+  //render inputed keywords
+  useEffect(() => {
+    const uniqueKeywords = Array.from(
+      new Set(searchHistory.map((keyword) => keyword.toLowerCase().trim()))
+    );
+    const word = uniqueKeywords.pop();
+
+    setWordsArr((prevWords: any) => [...prevWords, word]);
+  }, [searchHistory]);
+
+  // Update search history
+  useEffect(() => {
+    const uniqueKeywords = Array.from(
+      new Set(searchHistory.map((keyword) => keyword.toLowerCase().trim()))
+    );
+
+    setWordsArr(uniqueKeywords);
+  }, [searchHistory]);
+
+  //search images with rendered keywords
+  const handleKeywordSearch = (e: React.MouseEvent<HTMLHeadingElement>) => {
+    const keyword: any = e.currentTarget.textContent;
+    console.log(keyword);
+    setSearchInput(keyword);
+  };
+
   return (
     <main>
-      <h1>Searchbar</h1>
-
-      <Link to="/history">
-        <h2>Go to history</h2>
-      </Link>
       <section>
-        <input
-          type="search"
-          placeholder="search for images"
-          onChange={handleSearch}
-        />
+        <h1>Photo Gallery</h1>
+
+        <div className="search-section">
+          <input
+            type="search"
+            placeholder="Search for images"
+            className="search-input"
+            onChange={handleSearch}
+          />
+        </div>
+        <Link to="/history" className="history-link">
+          <h2>Go to history</h2>
+        </Link>
       </section>
 
+      {/* <section>{searchHistory}</section> */}
+      {wordsArr.map((word: string, index: number) => (
+        <h2 onClick={handleKeywordSearch} key={index}>
+          {word}
+        </h2>
+      ))}
       <section>
         <div className="photo-grid">
           {searchInput === ""

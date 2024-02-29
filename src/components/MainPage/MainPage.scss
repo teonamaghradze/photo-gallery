@@ -20,3 +20,29 @@
     }
   }
 }
+
+main {
+  section:first-child {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    align-items: center;
+
+    h1 {
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+    .search-section {
+      margin-top: 20px;
+    }
+
+    .search-input {
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      width: 300px;
+      font-size: 16px;
+    }
+  }
+}

@@ -1,14 +1,17 @@
-import React from "react";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import MainPage from "./components/MainPage/MainPage";
 import HistoryPage from "./components/HistoryPage/HistoryPage";
+import NotFoundPage from "./ui/NotFoundPage";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<MainPage />} />
-        <Route path="history" element={<HistoryPage />} />
+        {/* Redirect from root to /main */}
+        <Route path="/" element={<Navigate to="/main" />} />
+        <Route path="/main" element={<MainPage />} />
+        <Route path="/history" element={<HistoryPage />} />
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>
   );

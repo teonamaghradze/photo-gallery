@@ -7,6 +7,7 @@ import { handleScroll } from "../../services/helpers";
 import { Link } from "react-router-dom";
 import useDebounce from "./hooks/useDebounce";
 
+const API_URL = "https://api.unsplash.com/photos";
 const API_KEY = process.env.REACT_APP_API_KEY;
 
 interface Photo {
@@ -23,6 +24,7 @@ function MainPage() {
   const [filteredPhotos, setFilteredPhotos] = useState<Photo[]>([]);
 
   const [page, setPage] = useState<number>(1);
+  const [filteredImgPage, setFilteredImgPage] = useState<number>(1);
 
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
   const [currentImage, setCurrentImage] = useState<string | null>(null);
@@ -34,31 +36,44 @@ function MainPage() {
   const [searchHistory, setSearchHistory] = useState<string[]>([]);
   const [wordsArr, setWordsArr] = useState<any>([]);
 
-  useEffect(() => {
-    // Fetch images based on search input
-    const searchImages = async (query: string) => {
-      try {
-        const response = await axios.get(
-          `https://api.unsplash.com/search/photos`,
-          {
-            params: {
-              query: query,
-              per_page: 20,
-            },
-            headers: {
-              Authorization: `Client-ID ${API_KEY}`,
-            },
-          }
-        );
+  const handleScrollRef = useRef(handleScroll(setPage));
+  const handleFilteredScrollRef = useRef(handleScroll(setFilteredImgPage));
 
+  // Fetch images based on search input
+  const searchImages = async (query: string, page: number) => {
+    try {
+      const response = await axios.get(
+        `https://api.unsplash.com/search/photos`,
+        {
+          params: {
+            query: query,
+            per_page: 20,
+            page: page,
+          },
+          headers: {
+            Authorization: `Client-ID ${API_KEY}`,
+          },
+        }
+      );
+
+      // Update filteredPhotos based on the page number
+      if (page === 1) {
         setFilteredPhotos(response.data.results);
-      } catch (error) {
-        console.error("Error fetching photos:", error);
+      } else {
+        setFilteredPhotos((prevPhotos) => [
+          ...prevPhotos,
+          ...response.data.results,
+        ]);
       }
-    };
+    } catch (error) {
+      console.error("Error fetching photos:", error);
+    }
+  };
 
+  useEffect(() => {
     if (debouncedSearchInput) {
-      searchImages(debouncedSearchInput);
+      // Fetch the first page of filtered images
+      searchImages(debouncedSearchInput, 1);
       setSearchHistory((prevHistory) => [
         ...prevHistory,
         debouncedSearchInput.trim(),
@@ -68,11 +83,19 @@ function MainPage() {
     }
   }, [debouncedSearchInput]);
 
+  // Update the useEffect that listens to changes in filteredImgPage
+  useEffect(() => {
+    if (debouncedSearchInput) {
+      // Fetch more pages of filtered images
+      searchImages(debouncedSearchInput, filteredImgPage);
+    }
+  }, [filteredImgPage, debouncedSearchInput]);
+
   // Fetch POPULAR images
   useEffect(() => {
     const fetchPopularPhotos = async () => {
       try {
-        const response = await axios.get("https://api.unsplash.com/photos", {
+        const response = await axios.get(API_URL, {
           params: {
             per_page: 20,
             order_by: "popular",
@@ -99,7 +122,7 @@ function MainPage() {
       if (currentImage) {
         try {
           const response = await axios.get(
-            `https://api.unsplash.com/photos/${currentImage}/statistics`,
+            `${API_URL}/${currentImage}/statistics`,
             {
               headers: {
                 Authorization: `Client-ID ${API_KEY}`,
@@ -131,7 +154,6 @@ function MainPage() {
   }, [isOpenModal]);
 
   //INFINITE SCROLL
-  const handleScrollRef = useRef(handleScroll(setPage));
 
   useEffect(() => {
     const scrollListener = () => handleScrollRef.current();
@@ -139,6 +161,15 @@ function MainPage() {
 
     return () => {
       window.removeEventListener("scroll", scrollListener);
+    };
+  }, []);
+
+  useEffect(() => {
+    const filteredScrollListener = () => handleFilteredScrollRef.current();
+    window.addEventListener("scroll", filteredScrollListener);
+
+    return () => {
+      window.removeEventListener("scroll", filteredScrollListener);
     };
   }, []);
 
@@ -209,55 +240,6 @@ function MainPage() {
           {word}
         </h2>
       ))}
-      {/* <section>
-        <div className="photo-grid">
-          {searchInput === ""
-            ? popularPhotos.map((photo: Photo, index: number) => (
-                <div
-                  onClick={() => handleImageClick(photo.id)}
-                  key={`${photo.id}-${index}`}
-                >
-                  <div className="img-container">
-                    <img src={photo.urls.small} alt={photo.alt_description} />
-                  </div>
-                  <div>
-                    {isOpenModal && currentImage === photo.id && (
-                      <Modal>
-                        <ImageCard
-                          photo={
-                            popularPhotos.find((p) => p.id === currentImage)!
-                          }
-                          statistics={statistics[currentImage]}
-                        />
-                      </Modal>
-                    )}
-                  </div>
-                </div>
-              ))
-            : filteredPhotos.map((photo: Photo, index: number) => (
-                <div
-                  onClick={() => handleImageClick(photo.id)}
-                  key={`${photo.id}-${index}`}
-                >
-                  <div className="img-container">
-                    <img src={photo.urls.small} alt={photo.alt_description} />
-                  </div>
-                  <div>
-                    {isOpenModal && currentImage === photo.id && (
-                      <Modal>
-                        <ImageCard
-                          photo={
-                            filteredPhotos.find((p) => p.id === currentImage)!
-                          }
-                          statistics={statistics[currentImage]}
-                        />
-                      </Modal>
-                    )}
-                  </div>
-                </div>
-              ))}
-        </div>
-      </section> */}
 
       <section>
         <div className="photo-grid">

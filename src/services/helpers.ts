@@ -1,4 +1,4 @@
-export const handleScroll = (setPage) => {
+export const handleScroll = (setPage: any) => {
   return () => {
     const scrollTop =
       (document.documentElement && document.documentElement.scrollTop) ||
@@ -12,7 +12,7 @@ export const handleScroll = (setPage) => {
       Math.ceil(scrollTop + clientHeight) >= scrollHeight;
 
     if (scrolledToBottom) {
-      setPage((prevPage) => prevPage + 1);
+      setPage((prevPage: any) => prevPage + 1);
     }
   };
 };

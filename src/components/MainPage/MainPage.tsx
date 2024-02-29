@@ -209,7 +209,7 @@ function MainPage() {
           {word}
         </h2>
       ))}
-      <section>
+      {/* <section>
         <div className="photo-grid">
           {searchInput === ""
             ? popularPhotos.map((photo: Photo, index: number) => (
@@ -256,6 +256,33 @@ function MainPage() {
                   </div>
                 </div>
               ))}
+        </div>
+      </section> */}
+
+      <section>
+        <div className="photo-grid">
+          {(searchInput === "" ? popularPhotos : filteredPhotos).map(
+            (photo: Photo, index: number) => (
+              <div
+                onClick={() => handleImageClick(photo.id)}
+                key={`${photo.id}-${index}`}
+              >
+                <div className="img-container">
+                  <img src={photo.urls.small} alt={photo.alt_description} />
+                </div>
+                <div>
+                  {isOpenModal && currentImage === photo.id && (
+                    <Modal>
+                      <ImageCard
+                        photo={photo}
+                        statistics={statistics[photo.id]}
+                      />
+                    </Modal>
+                  )}
+                </div>
+              </div>
+            )
+          )}
         </div>
       </section>
     </main>

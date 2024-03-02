@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { fetchPopularPhotos, fetchSearchImages } from "../../services/api";
 import usePhotoStatistics from "../../hooks/usePhotoStatistics";
+import PhotoGrid from "../../ui/PhotoGrid";
 
 interface Photo {
   id: string;
@@ -160,30 +161,13 @@ function MainPage({
       </section>
 
       <section>
-        <div className="photo-grid">
-          {((searchInput === "" ? popularPhotos : filteredPhotos) ?? []).map(
-            (photo: Photo, index: number) => (
-              <div
-                onClick={(e) => handleImageClick(photo.id, e)}
-                key={`${photo.id}-${index}`}
-              >
-                <div className="img-container">
-                  <img src={photo.urls.small} alt={photo.alt_description} />
-                </div>
-                <div>
-                  {isOpenModal && currentImage === photo.id && (
-                    <Modal>
-                      <ImageCard
-                        photo={photo}
-                        statistics={statistics[photo.id]}
-                      />
-                    </Modal>
-                  )}
-                </div>
-              </div>
-            )
-          )}
-        </div>
+        <PhotoGrid
+          photos={searchInput === "" ? popularPhotos : filteredPhotos}
+          handleImageClick={handleImageClick}
+          isOpenModal={isOpenModal}
+          currentImage={currentImage}
+          statistics={statistics}
+        />
       </section>
     </main>
   );

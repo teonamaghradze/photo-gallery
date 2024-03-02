@@ -7,6 +7,7 @@ import ImageCard from "../MainPage/ImageCard";
 import usePhotoStatistics from "../../hooks/usePhotoStatistics";
 import { handleScroll } from "../../services/helpers";
 import { getEventListeners } from "events";
+import PhotoGrid from "../../ui/PhotoGrid";
 // import { handleScroll } from "../../services/helpers";
 
 function HistoryPage({
@@ -106,7 +107,7 @@ function HistoryPage({
         ))}
       </div>
 
-      <div className="photo-grid">
+      {/* <div className="photo-grid">
         {searchData &&
           searchData?.map((photo: any, index: number) => (
             <div
@@ -128,7 +129,14 @@ function HistoryPage({
               </div>
             </div>
           ))}
-      </div>
+      </div> */}
+      <PhotoGrid
+        photos={searchData || []}
+        handleImageClick={handleImageClick}
+        isOpenModal={isOpenModal}
+        currentImage={currentImage}
+        statistics={statistics}
+      />
     </div>
   );
 }

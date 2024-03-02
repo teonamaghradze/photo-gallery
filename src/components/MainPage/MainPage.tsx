@@ -21,6 +21,7 @@ function MainPage({
   searchInput,
   debouncedSearchInput,
   filteredImgPage,
+  setFilteredImgPage,
   setSearchHistory,
   currentImage,
   handleImageClick,
@@ -28,7 +29,6 @@ function MainPage({
 
   statistics,
   setStatistics,
-  handleFilteredScrollRef,
   page,
   setPage,
   filteredPhotos,
@@ -106,28 +106,19 @@ function MainPage({
   }, [isOpenModal]);
 
   //INFINITE SCROLL
-  useEffect(() => {
-    const scrollListener = handleScroll(setPage);
-    const handleScrollEvent = () => {
-      scrollListener();
-    };
-
-    window.addEventListener("scroll", handleScrollEvent);
-    return () => {
-      window.removeEventListener("scroll", handleScrollEvent);
-    };
-  }, [setPage]);
 
   useEffect(() => {
-    const filteredScrollListener = () => handleFilteredScrollRef.current();
-    console.log(filteredScrollListener, "main");
+    const popularScrollHandler = handleScroll(setPage, false);
+    const filteredScrollHandler = handleScroll(setFilteredImgPage, true);
 
-    window.addEventListener("scroll", filteredScrollListener);
+    window.addEventListener("scroll", popularScrollHandler);
+    window.addEventListener("scroll", filteredScrollHandler);
 
     return () => {
-      window.removeEventListener("scroll", filteredScrollListener);
+      window.removeEventListener("scroll", popularScrollHandler);
+      window.removeEventListener("scroll", filteredScrollHandler);
     };
-  }, [handleFilteredScrollRef]);
+  }, []);
 
   //find image with input search
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {

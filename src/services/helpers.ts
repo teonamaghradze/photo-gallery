@@ -1,5 +1,4 @@
-export const handleScroll = (setPage: any) => {
-  console.log("traki");
+export const handleScroll = (setPage: any, isFiltered: boolean) => {
   return () => {
     const scrollTop =
       (document.documentElement && document.documentElement.scrollTop) ||

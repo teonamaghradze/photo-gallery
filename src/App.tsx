@@ -21,7 +21,7 @@ function App() {
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
   const [statistics, setStatistics] = useState<{ [id: string]: object }>({});
   const [page, setPage] = useState<number>(1);
-  const handleFilteredScrollRef = useRef(handleScroll(setFilteredImgPage));
+  // const handleFilteredScrollRef = useRef(handleScroll(setFilteredImgPage));
 
   const [filteredPhotos, setFilteredPhotos] = useState<any[]>([]);
 
@@ -65,7 +65,8 @@ function App() {
                   isOpenModal={isOpenModal}
                   statistics={statistics}
                   setStatistics={setStatistics}
-                  handleFilteredScrollRef={handleFilteredScrollRef}
+                  // handleFilteredScrollRef={handleFilteredScrollRef}
+                  setFilteredImgPage={setFilteredImgPage}
                   page={page}
                   setPage={setPage}
                   filteredPhotos={filteredPhotos}
@@ -84,7 +85,7 @@ function App() {
                   setFilteredImgPage={setFilteredImgPage}
                   setWordsArr={setWordsArr}
                   searchHistory={searchHistory}
-                  handleFilteredScrollRef={handleFilteredScrollRef}
+                  // handleFilteredScrollRef={handleFilteredScrollRef}
                   handleImageClick={handleImageClick}
                   isOpenModal={isOpenModal}
                   currentImage={currentImage}

@@ -10,6 +10,7 @@ import {
   fetchPopularPhotos,
   fetchSearchImages,
 } from "../../services/api";
+import usePhotoStatistics from "../../hooks/usePhotoStatistics";
 
 interface Photo {
   id: string;
@@ -96,20 +97,21 @@ function MainPage({
 
   // Fetch statistics for a photo
 
-  const { data: statisticsData } = useQuery({
-    queryKey: ["photoStatistics", currentImage],
-    queryFn: () => fetchPhotoStatistics(currentImage),
-    enabled: !!currentImage,
-  });
+  // const { data: statisticsData } = useQuery({
+  //   queryKey: ["photoStatistics", currentImage],
+  //   queryFn: () => fetchPhotoStatistics(currentImage),
+  //   enabled: !!currentImage,
+  // });
 
-  useEffect(() => {
-    if (statisticsData) {
-      setStatistics((prevStats: any) => ({
-        ...prevStats,
-        [currentImage]: statisticsData,
-      }));
-    }
-  }, [statisticsData, currentImage, setStatistics]);
+  // useEffect(() => {
+  //   if (statisticsData) {
+  //     setStatistics((prevStats: any) => ({
+  //       ...prevStats,
+  //       [currentImage]: statisticsData,
+  //     }));
+  //   }
+  // }, [statisticsData, currentImage, setStatistics]);
+  const statisticsData = usePhotoStatistics(currentImage, setStatistics);
 
   //--------------------------------------------------------------//
 

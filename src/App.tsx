@@ -83,7 +83,7 @@ function App() {
                   isOpenModal={isOpenModal}
                   currentImage={currentImage}
                   statistics={statistics}
-                  seStatistics={setStatistics}
+                  setStatistics={setStatistics}
                 />
               }
             />

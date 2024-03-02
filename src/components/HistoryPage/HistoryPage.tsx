@@ -4,6 +4,7 @@ import { fetchSearchImages } from "../../services/api";
 import "./HistoryPage.scss";
 import Modal from "../../ui/Modal";
 import ImageCard from "../MainPage/ImageCard";
+import usePhotoStatistics from "../../hooks/usePhotoStatistics";
 
 function HistoryPage({
   wordsArr,
@@ -16,6 +17,7 @@ function HistoryPage({
   isOpenModal,
   currentImage,
   statistics,
+  setStatistics,
 }: any) {
   const {
     data: searchData,
@@ -44,6 +46,12 @@ function HistoryPage({
 
     setWordsArr(uniqueKeywords);
   }, [searchHistory, setWordsArr]);
+
+  //-------------------------------------------------------------------------//
+  //STAtIstics
+  const statisticsData = usePhotoStatistics(currentImage, setStatistics);
+
+  //-----------------------------------------------------------------//
 
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Error fetching data</div>;

@@ -1,6 +1,7 @@
 import Modal from "./Modal";
 import ImageCard from "../components/MainPage/ImageCard";
 import "./PhotoGrid.scss";
+import usePhotoStatistics from "../hooks/usePhotoStatistics";
 
 function PhotoGrid({
   photos,
@@ -8,7 +9,12 @@ function PhotoGrid({
   isOpenModal,
   currentImage,
   statistics,
+  setStatistics,
 }: any) {
+  // Fetch statistics for a photo
+
+  usePhotoStatistics(currentImage, setStatistics);
+
   return (
     <div className="photo-grid">
       {photos.map((photo: any, index: any) => (

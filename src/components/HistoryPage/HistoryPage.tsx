@@ -47,14 +47,7 @@ function HistoryPage({
     setWordsArr(uniqueKeywords);
   }, [searchHistory, setWordsArr]);
 
-  //-------------------------------------------------------------------------//
-  //STAtIstics
-  usePhotoStatistics(currentImage, setStatistics);
-
-  //-----------------------------------------------------------------//
-
   //INFINITE SCROLL
-
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Error fetching data</div>;
 
@@ -75,6 +68,7 @@ function HistoryPage({
         isOpenModal={isOpenModal}
         currentImage={currentImage}
         statistics={statistics}
+        setStatistics={setStatistics}
       />
     </div>
   );

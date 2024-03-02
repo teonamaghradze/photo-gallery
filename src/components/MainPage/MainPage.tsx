@@ -89,12 +89,6 @@ function MainPage({
     }
   }, [filteredImgPage, debouncedSearchInput]);
 
-  //=-------------------------------------------------------------------//
-
-  // Fetch statistics for a photo
-
-  usePhotoStatistics(currentImage, setStatistics);
-
   //--------------------------------------------------------------//
   //hide scroll while modal is open
   useEffect(() => {
@@ -156,6 +150,7 @@ function MainPage({
           isOpenModal={isOpenModal}
           currentImage={currentImage}
           statistics={statistics}
+          setStatistics={setStatistics}
         />
       </section>
     </main>

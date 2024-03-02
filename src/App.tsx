@@ -7,18 +7,19 @@ import { useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import useDebounce from "./components/MainPage/hooks/useDebounce";
+import { ImagesContext } from "./context/context";
 
 const queryClient = new QueryClient();
 
 function App() {
-  const [searchInput, setSearchInput] = useState("");
-  const debouncedSearchInput = useDebounce<string>(searchInput);
-  const [searchHistory, setSearchHistory] = useState<string[]>([]);
-  const [currentImage, setCurrentImage] = useState<string | null | any>(null);
-  const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
   const [statistics, setStatistics] = useState<{ [id: string]: object }>({});
-
+  const [searchInput, setSearchInput] = useState("");
+  const [currentImage, setCurrentImage] = useState<string | null | any>(null);
+  const [searchHistory, setSearchHistory] = useState<string[]>([]);
+  const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
   const [filteredPhotos, setFilteredPhotos] = useState<any[]>([]);
+
+  const debouncedSearchInput = useDebounce<string>(searchInput);
 
   //search images with rendered keywords
   const handleKeywordSearch = (e: React.MouseEvent<HTMLHeadingElement>) => {
@@ -42,47 +43,47 @@ function App() {
     <>
       <QueryClientProvider client={queryClient}>
         <ReactQueryDevtools initialIsOpen={false} />
-        <BrowserRouter>
-          <Navbar />
-          <Routes>
-            <Route path="/" element={<Navigate to="/main" />} />
-            <Route
-              path="/main"
-              element={
-                <MainPage
-                  searchInput={searchInput}
-                  setSearchInput={setSearchInput}
-                  debouncedSearchInput={debouncedSearchInput}
-                  setSearchHistory={setSearchHistory}
-                  currentImage={currentImage}
-                  handleImageClick={handleImageClick}
-                  isOpenModal={isOpenModal}
-                  statistics={statistics}
-                  setStatistics={setStatistics}
-                  filteredPhotos={filteredPhotos}
-                  setFilteredPhotos={setFilteredPhotos}
-                />
-              }
-            />
-            <Route
-              path="/history"
-              element={
-                <HistoryPage
-                  handleKeywordSearch={handleKeywordSearch}
-                  debouncedSearchInput={debouncedSearchInput}
-                  searchHistory={searchHistory}
-                  handleImageClick={handleImageClick}
-                  isOpenModal={isOpenModal}
-                  currentImage={currentImage}
-                  statistics={statistics}
-                  setStatistics={setStatistics}
-                  setFilteredPhotos={setFilteredPhotos}
-                />
-              }
-            />
-            <Route path="*" element={<NotFoundPage />} />
-          </Routes>
-        </BrowserRouter>
+        <ImagesContext.Provider
+          value={{
+            statistics,
+            setStatistics,
+            searchInput,
+            setSearchInput,
+            currentImage,
+            searchHistory,
+            setSearchHistory,
+            isOpenModal,
+            filteredPhotos,
+            setFilteredPhotos,
+          }}
+        >
+          <BrowserRouter>
+            <Navbar />
+            <Routes>
+              <Route path="/" element={<Navigate to="/main" />} />
+              <Route
+                path="/main"
+                element={
+                  <MainPage
+                    debouncedSearchInput={debouncedSearchInput}
+                    handleImageClick={handleImageClick}
+                  />
+                }
+              />
+              <Route
+                path="/history"
+                element={
+                  <HistoryPage
+                    handleKeywordSearch={handleKeywordSearch}
+                    debouncedSearchInput={debouncedSearchInput}
+                    handleImageClick={handleImageClick}
+                  />
+                }
+              />
+              <Route path="*" element={<NotFoundPage />} />
+            </Routes>
+          </BrowserRouter>
+        </ImagesContext.Provider>
       </QueryClientProvider>
     </>
   );

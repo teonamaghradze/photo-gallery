@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import "./MainPage.scss";
 import { handleScroll } from "../../services/helpers";
 import { Link } from "react-router-dom";
@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchPopularPhotos, fetchSearchImages } from "../../services/api";
 import usePhotoStatistics from "../../hooks/usePhotoStatistics";
 import PhotoGrid from "../../ui/PhotoGrid";
+import { ImagesContext } from "../../context/context";
 
 interface Photo {
   id: string;
@@ -16,25 +17,17 @@ interface Photo {
   likes: string;
 }
 
-function MainPage({
-  setSearchInput,
-  searchInput,
-  debouncedSearchInput,
-
-  setSearchHistory,
-  currentImage,
-  handleImageClick,
-  isOpenModal,
-
-  statistics,
-  setStatistics,
-
-  filteredPhotos,
-  setFilteredPhotos,
-}: any) {
+function MainPage({ debouncedSearchInput, handleImageClick }: any) {
   const [popularPhotos, setPopularPhotos] = useState<Photo[]>([]);
   const [page, setPage] = useState<number>(1);
   const [filteredImgPage, setFilteredImgPage] = useState<number>(1);
+  const {
+    setSearchHistory,
+    setSearchInput,
+    searchInput,
+    filteredPhotos,
+    setFilteredPhotos,
+  } = useContext(ImagesContext);
 
   //-----------------------------------------------------------------------//
   // // Fetch POPULAR images
@@ -89,16 +82,6 @@ function MainPage({
     }
   }, [filteredImgPage, debouncedSearchInput]);
 
-  //--------------------------------------------------------------//
-  //hide scroll while modal is open
-  useEffect(() => {
-    if (isOpenModal) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "auto";
-    }
-  }, [isOpenModal]);
-
   //INFINITE SCROLL
 
   useEffect(() => {
@@ -147,10 +130,6 @@ function MainPage({
         <PhotoGrid
           photos={searchInput === "" ? popularPhotos : filteredPhotos}
           handleImageClick={handleImageClick}
-          isOpenModal={isOpenModal}
-          currentImage={currentImage}
-          statistics={statistics}
-          setStatistics={setStatistics}
         />
       </section>
     </main>

@@ -1,3 +1,3 @@
-import { createContext } from "react";
+import { createContext, useContext, useState } from "react";
 
-// export const ImagesContext = createContext<User | undefined>(undefined);
+export const ImagesContext = createContext<any>({});

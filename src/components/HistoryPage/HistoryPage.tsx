@@ -1,26 +1,19 @@
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { fetchSearchImages } from "../../services/api";
 import "./HistoryPage.scss";
-
-import usePhotoStatistics from "../../hooks/usePhotoStatistics";
-
 import PhotoGrid from "../../ui/PhotoGrid";
+import { ImagesContext } from "../../context/context";
 
 function HistoryPage({
   handleKeywordSearch,
   debouncedSearchInput,
-  searchHistory,
+
   handleImageClick,
-  isOpenModal,
-  currentImage,
-  statistics,
-  setStatistics,
-  setFilteredPhotos,
 }: any) {
   const [filteredImgPage, setFilteredImgPage] = useState<number>(1);
   const [wordsArr, setWordsArr] = useState<any[]>([]);
-
+  const { searchHistory, setFilteredPhotos } = useContext(ImagesContext);
   const {
     data: searchData,
     isLoading,
@@ -65,10 +58,6 @@ function HistoryPage({
       <PhotoGrid
         photos={searchData || []}
         handleImageClick={handleImageClick}
-        isOpenModal={isOpenModal}
-        currentImage={currentImage}
-        statistics={statistics}
-        setStatistics={setStatistics}
       />
     </div>
   );

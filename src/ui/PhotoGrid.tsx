@@ -2,18 +2,24 @@ import Modal from "./Modal";
 import ImageCard from "../components/MainPage/ImageCard";
 import "./PhotoGrid.scss";
 import usePhotoStatistics from "../hooks/usePhotoStatistics";
+import { useContext, useEffect } from "react";
+import { ImagesContext } from "../context/context";
 
-function PhotoGrid({
-  photos,
-  handleImageClick,
-  isOpenModal,
-  currentImage,
-  statistics,
-  setStatistics,
-}: any) {
-  // Fetch statistics for a photo
+function PhotoGrid({ photos, handleImageClick }: any) {
+  const { currentImage, statistics, setStatistics, isOpenModal } =
+    useContext(ImagesContext);
 
   usePhotoStatistics(currentImage, setStatistics);
+
+  //--------------------------------------------------------------//
+  //hide scroll while modal is open
+  useEffect(() => {
+    if (isOpenModal) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+  }, [isOpenModal]);
 
   return (
     <div className="photo-grid">

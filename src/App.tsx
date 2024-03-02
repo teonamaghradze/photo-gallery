@@ -3,10 +3,11 @@ import MainPage from "./components/MainPage/MainPage";
 import HistoryPage from "./components/HistoryPage/HistoryPage";
 import NotFoundPage from "./ui/NotFoundPage";
 import Navbar from "./ui/Navbar";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import useDebounce from "./components/MainPage/hooks/useDebounce";
+import { handleScroll } from "./services/helpers";
 
 const queryClient = new QueryClient();
 
@@ -19,6 +20,7 @@ function App() {
   const [currentImage, setCurrentImage] = useState<string | null | any>(null);
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
   const [statistics, setStatistics] = useState<{ [id: string]: object }>({});
+  const handleFilteredScrollRef = useRef(handleScroll(setFilteredImgPage));
 
   //search images with rendered keywords
   const handleKeywordSearch = (e: React.MouseEvent<HTMLHeadingElement>) => {
@@ -33,6 +35,14 @@ function App() {
     setIsOpenModal((isOpen) => !isOpen);
   };
 
+  useEffect(() => {
+    const filteredScrollListener = () => handleFilteredScrollRef.current();
+    window.addEventListener("scroll", filteredScrollListener);
+
+    return () => {
+      window.removeEventListener("scroll", filteredScrollListener);
+    };
+  }, [handleFilteredScrollRef]);
   return (
     <>
       <QueryClientProvider client={queryClient}>
@@ -56,6 +66,7 @@ function App() {
                   isOpenModal={isOpenModal}
                   statistics={statistics}
                   setStatistics={setStatistics}
+                  handleFilteredScrollRef={handleFilteredScrollRef}
                 />
               }
             />
@@ -67,8 +78,10 @@ function App() {
                   handleKeywordSearch={handleKeywordSearch}
                   debouncedSearchInput={debouncedSearchInput}
                   filteredImgPage={filteredImgPage}
+                  setFilteredImgPage={setFilteredImgPage}
                   setWordsArr={setWordsArr}
                   searchHistory={searchHistory}
+                  handleFilteredScrollRef={handleFilteredScrollRef}
                 />
               }
             />

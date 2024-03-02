@@ -25,7 +25,6 @@ function MainPage({
   searchInput,
   debouncedSearchInput,
   filteredImgPage,
-  setFilteredImgPage,
   setSearchHistory,
   currentImage,
   handleImageClick,
@@ -33,12 +32,12 @@ function MainPage({
 
   statistics,
   setStatistics,
+  handleFilteredScrollRef,
 }: any) {
   const [popularPhotos, setPopularPhotos] = useState<Photo[]>([]);
   const [filteredPhotos, setFilteredPhotos] = useState<Photo[]>([]);
 
   const [page, setPage] = useState<number>(1);
-  const handleFilteredScrollRef = useRef(handleScroll(setFilteredImgPage));
 
   //-----------------------------------------------------------------------//
 
@@ -137,14 +136,14 @@ function MainPage({
     };
   }, [setPage]);
 
-  useEffect(() => {
-    const filteredScrollListener = () => handleFilteredScrollRef.current();
-    window.addEventListener("scroll", filteredScrollListener);
+  // useEffect(() => {
+  //   const filteredScrollListener = () => handleFilteredScrollRef.current();
+  //   window.addEventListener("scroll", filteredScrollListener);
 
-    return () => {
-      window.removeEventListener("scroll", filteredScrollListener);
-    };
-  }, []);
+  //   return () => {
+  //     window.removeEventListener("scroll", filteredScrollListener);
+  //   };
+  // }, [handleFilteredScrollRef]);
 
   //find image with input search
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {

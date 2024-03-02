@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { fetchSearchImages } from "../../services/api";
+import "./HistoryPage.scss";
 
 function HistoryPage({
   wordsArr,
@@ -43,22 +44,25 @@ function HistoryPage({
   if (isError) return <div>Error fetching data</div>;
 
   return (
-    <div>
-      <Link to="/">Go back to MainPage</Link>
+    <div className="history-container">
       <h1>History page</h1>
 
-      {wordsArr.map((word: string, index: number) => (
-        <h2 onClick={handleKeywordSearch} key={index}>
-          {word}
-        </h2>
-      ))}
-
-      {searchData &&
-        searchData.map((photo: any, index: number) => (
-          <div key={index}>
-            <img src={photo.urls.small} alt={photo.alt_description} />
-          </div>
+      <div className="buttons">
+        {wordsArr.map((word: string, index: number) => (
+          <p onClick={handleKeywordSearch} key={index}>
+            {word}
+          </p>
         ))}
+      </div>
+
+      <div className="photo-grid">
+        {searchData &&
+          searchData.map((photo: any, index: number) => (
+            <div key={index} className="image-container">
+              <img src={photo.urls.small} alt={photo.alt_description} />
+            </div>
+          ))}
+      </div>
     </div>
   );
 }

@@ -1,0 +1,44 @@
+.history-container {
+  .buttons {
+    display: flex;
+    flex-wrap: wrap;
+    max-width: 70rem;
+    p {
+      margin: 0.5rem;
+      padding: 0.5rem;
+      background-color: #fa700efb;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+
+      &:hover {
+        background-color: #fa700ea7;
+      }
+    }
+  }
+  .photo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1rem;
+
+    .image-container {
+      position: relative;
+      overflow: hidden;
+      border-radius: 8px;
+      height: 200px;
+      img {
+        width: 100%;
+        height: 100%;
+        display: block;
+        border-radius: 8px;
+        object-fit: cover;
+        transition: transform 0.3s ease-in-out;
+        &:hover {
+          transform: scale(1.05);
+        }
+      }
+    }
+  }
+}

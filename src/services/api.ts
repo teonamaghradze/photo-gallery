@@ -3,8 +3,6 @@ import axios from "axios";
 const API_KEY = process.env.REACT_APP_API_KEY;
 
 export const fetchPopularPhotos = async (page: any) => {
-  console.log("sup?");
-
   try {
     const response = await axios.get("https://api.unsplash.com/photos", {
       params: {

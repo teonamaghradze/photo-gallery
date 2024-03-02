@@ -1,10 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { fetchSearchImages } from "../../services/api";
 import "./HistoryPage.scss";
 import Modal from "../../ui/Modal";
 import ImageCard from "../MainPage/ImageCard";
 import usePhotoStatistics from "../../hooks/usePhotoStatistics";
+import { handleScroll } from "../../services/helpers";
+import { getEventListeners } from "events";
+// import { handleScroll } from "../../services/helpers";
 
 function HistoryPage({
   wordsArr,
@@ -18,6 +21,12 @@ function HistoryPage({
   currentImage,
   statistics,
   setStatistics,
+  handleFilteredScrollRef,
+  setFilteredImgPage,
+  filteredPhotos,
+  setFilteredPhotos,
+  page,
+  setPage,
 }: any) {
   const {
     data: searchData,
@@ -26,7 +35,24 @@ function HistoryPage({
   } = useQuery({
     queryKey: ["searchPhotos", debouncedSearchInput, filteredImgPage],
     queryFn: () => fetchSearchImages(debouncedSearchInput, filteredImgPage),
+    retry: 3,
   });
+
+  const [historyImages, setHistoryImages] = useState<any>([]);
+
+  // Handle search results
+  useEffect(() => {
+    if (searchData) {
+      if (filteredImgPage === 1) {
+        // setFilteredPhotos(searchData);
+        setHistoryImages(searchData);
+      } else {
+        console.log(1111);
+
+        setHistoryImages((prevPhotos: any) => [...prevPhotos, ...searchData]);
+      }
+    }
+  }, [searchData, filteredImgPage, setFilteredPhotos]);
 
   //render inputed keywords
   useEffect(() => {
@@ -49,9 +75,21 @@ function HistoryPage({
 
   //-------------------------------------------------------------------------//
   //STAtIstics
-  const statisticsData = usePhotoStatistics(currentImage, setStatistics);
+  usePhotoStatistics(currentImage, setStatistics);
 
   //-----------------------------------------------------------------//
+
+  //INFINITE SCROLL
+
+  useEffect(() => {
+    const filteredScrollListener = () => handleFilteredScrollRef.current();
+
+    window.addEventListener("scroll", filteredScrollListener);
+
+    return () => {
+      window.removeEventListener("scroll", filteredScrollListener);
+    };
+  }, [handleFilteredScrollRef]);
 
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Error fetching data</div>;
@@ -70,7 +108,7 @@ function HistoryPage({
 
       <div className="photo-grid">
         {searchData &&
-          searchData.map((photo: any, index: number) => (
+          searchData?.map((photo: any, index: number) => (
             <div
               onClick={(e) => handleImageClick(photo.id, e)}
               key={`${photo.id}-${index}`}

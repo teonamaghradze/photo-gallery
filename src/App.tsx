@@ -3,7 +3,7 @@ import MainPage from "./components/MainPage/MainPage";
 import HistoryPage from "./components/HistoryPage/HistoryPage";
 import NotFoundPage from "./ui/NotFoundPage";
 import Navbar from "./ui/Navbar";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import useDebounce from "./components/MainPage/hooks/useDebounce";
@@ -20,7 +20,10 @@ function App() {
   const [currentImage, setCurrentImage] = useState<string | null | any>(null);
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
   const [statistics, setStatistics] = useState<{ [id: string]: object }>({});
+  const [page, setPage] = useState<number>(1);
   const handleFilteredScrollRef = useRef(handleScroll(setFilteredImgPage));
+
+  const [filteredPhotos, setFilteredPhotos] = useState<any[]>([]);
 
   //search images with rendered keywords
   const handleKeywordSearch = (e: React.MouseEvent<HTMLHeadingElement>) => {
@@ -64,6 +67,10 @@ function App() {
                   statistics={statistics}
                   setStatistics={setStatistics}
                   handleFilteredScrollRef={handleFilteredScrollRef}
+                  page={page}
+                  setPage={setPage}
+                  filteredPhotos={filteredPhotos}
+                  setFilteredPhotos={setFilteredPhotos}
                 />
               }
             />
@@ -84,6 +91,10 @@ function App() {
                   currentImage={currentImage}
                   statistics={statistics}
                   setStatistics={setStatistics}
+                  page={page}
+                  setPage={setPage}
+                  filteredPhotos={filteredPhotos}
+                  setFilteredPhotos={setFilteredPhotos}
                 />
               }
             />

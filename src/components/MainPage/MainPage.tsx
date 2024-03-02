@@ -1,15 +1,11 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import ImageCard from "./ImageCard";
 import Modal from "../../ui/Modal";
 import "./MainPage.scss";
 import { handleScroll } from "../../services/helpers";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import {
-  fetchPhotoStatistics,
-  fetchPopularPhotos,
-  fetchSearchImages,
-} from "../../services/api";
+import { fetchPopularPhotos, fetchSearchImages } from "../../services/api";
 import usePhotoStatistics from "../../hooks/usePhotoStatistics";
 
 interface Photo {
@@ -34,11 +30,12 @@ function MainPage({
   statistics,
   setStatistics,
   handleFilteredScrollRef,
+  page,
+  setPage,
+  filteredPhotos,
+  setFilteredPhotos,
 }: any) {
   const [popularPhotos, setPopularPhotos] = useState<Photo[]>([]);
-  const [filteredPhotos, setFilteredPhotos] = useState<Photo[]>([]);
-
-  const [page, setPage] = useState<number>(1);
 
   //-----------------------------------------------------------------------//
   // // Fetch POPULAR images
@@ -97,24 +94,9 @@ function MainPage({
 
   // Fetch statistics for a photo
 
-  // const { data: statisticsData } = useQuery({
-  //   queryKey: ["photoStatistics", currentImage],
-  //   queryFn: () => fetchPhotoStatistics(currentImage),
-  //   enabled: !!currentImage,
-  // });
-
-  // useEffect(() => {
-  //   if (statisticsData) {
-  //     setStatistics((prevStats: any) => ({
-  //       ...prevStats,
-  //       [currentImage]: statisticsData,
-  //     }));
-  //   }
-  // }, [statisticsData, currentImage, setStatistics]);
-  const statisticsData = usePhotoStatistics(currentImage, setStatistics);
+  usePhotoStatistics(currentImage, setStatistics);
 
   //--------------------------------------------------------------//
-
   //hide scroll while modal is open
   useEffect(() => {
     if (isOpenModal) {
@@ -139,6 +121,8 @@ function MainPage({
 
   useEffect(() => {
     const filteredScrollListener = () => handleFilteredScrollRef.current();
+    console.log(filteredScrollListener, "main");
+
     window.addEventListener("scroll", filteredScrollListener);
 
     return () => {
@@ -148,6 +132,7 @@ function MainPage({
 
   //find image with input search
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault();
     setSearchInput(e.target.value);
     const filtered = data.filter((photo: any) =>
       photo.alt_description.toLowerCase().includes(e.target.value.toLowerCase())

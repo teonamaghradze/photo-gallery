@@ -1,14 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { fetchSearchImages } from "../../services/api";
 import "./HistoryPage.scss";
-import Modal from "../../ui/Modal";
-import ImageCard from "../MainPage/ImageCard";
+
 import usePhotoStatistics from "../../hooks/usePhotoStatistics";
-import { handleScroll } from "../../services/helpers";
-import { getEventListeners } from "events";
+
 import PhotoGrid from "../../ui/PhotoGrid";
-// import { handleScroll } from "../../services/helpers";
 
 function HistoryPage({
   wordsArr,
@@ -23,11 +20,7 @@ function HistoryPage({
   statistics,
   setStatistics,
   handleFilteredScrollRef,
-  setFilteredImgPage,
-  filteredPhotos,
   setFilteredPhotos,
-  page,
-  setPage,
 }: any) {
   const {
     data: searchData,
@@ -107,29 +100,6 @@ function HistoryPage({
         ))}
       </div>
 
-      {/* <div className="photo-grid">
-        {searchData &&
-          searchData?.map((photo: any, index: number) => (
-            <div
-              onClick={(e) => handleImageClick(photo.id, e)}
-              key={`${photo.id}-${index}`}
-            >
-              <div className="image-container">
-                <img src={photo.urls.small} alt={photo.alt_description} />
-              </div>
-              <div>
-                {isOpenModal && currentImage === photo.id && (
-                  <Modal>
-                    <ImageCard
-                      photo={photo}
-                      statistics={statistics[photo.id]}
-                    />
-                  </Modal>
-                )}
-              </div>
-            </div>
-          ))}
-      </div> */}
       <PhotoGrid
         photos={searchData || []}
         handleImageClick={handleImageClick}

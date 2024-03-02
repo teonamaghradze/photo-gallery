@@ -59,7 +59,6 @@ function App() {
                   setSearchInput={setSearchInput}
                   debouncedSearchInput={debouncedSearchInput}
                   filteredImgPage={filteredImgPage}
-                  setFilteredImgPage={setFilteredImgPage}
                   setSearchHistory={setSearchHistory}
                   currentImage={currentImage}
                   handleImageClick={handleImageClick}
@@ -91,9 +90,6 @@ function App() {
                   currentImage={currentImage}
                   statistics={statistics}
                   setStatistics={setStatistics}
-                  page={page}
-                  setPage={setPage}
-                  filteredPhotos={filteredPhotos}
                   setFilteredPhotos={setFilteredPhotos}
                 />
               }

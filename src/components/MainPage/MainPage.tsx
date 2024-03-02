@@ -1,6 +1,4 @@
 import { useEffect, useState } from "react";
-import ImageCard from "./ImageCard";
-import Modal from "../../ui/Modal";
 import "./MainPage.scss";
 import { handleScroll } from "../../services/helpers";
 import { Link } from "react-router-dom";

@@ -1,4 +1,3 @@
-import React from "react";
 import Modal from "./Modal";
 import ImageCard from "../components/MainPage/ImageCard";
 import "./PhotoGrid.scss";

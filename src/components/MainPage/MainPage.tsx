@@ -20,8 +20,7 @@ function MainPage({
   setSearchInput,
   searchInput,
   debouncedSearchInput,
-  filteredImgPage,
-  setFilteredImgPage,
+
   setSearchHistory,
   currentImage,
   handleImageClick,
@@ -29,12 +28,13 @@ function MainPage({
 
   statistics,
   setStatistics,
-  page,
-  setPage,
+
   filteredPhotos,
   setFilteredPhotos,
 }: any) {
   const [popularPhotos, setPopularPhotos] = useState<Photo[]>([]);
+  const [page, setPage] = useState<number>(1);
+  const [filteredImgPage, setFilteredImgPage] = useState<number>(1);
 
   //-----------------------------------------------------------------------//
   // // Fetch POPULAR images

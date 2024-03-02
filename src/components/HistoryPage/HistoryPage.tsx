@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { fetchSearchImages } from "../../services/api";
 import "./HistoryPage.scss";
 
@@ -8,11 +8,8 @@ import usePhotoStatistics from "../../hooks/usePhotoStatistics";
 import PhotoGrid from "../../ui/PhotoGrid";
 
 function HistoryPage({
-  wordsArr,
   handleKeywordSearch,
   debouncedSearchInput,
-  filteredImgPage,
-  setWordsArr,
   searchHistory,
   handleImageClick,
   isOpenModal,
@@ -21,6 +18,9 @@ function HistoryPage({
   setStatistics,
   setFilteredPhotos,
 }: any) {
+  const [filteredImgPage, setFilteredImgPage] = useState<number>(1);
+  const [wordsArr, setWordsArr] = useState<any[]>([]);
+
   const {
     data: searchData,
     isLoading,
@@ -34,7 +34,7 @@ function HistoryPage({
   // Handle search results
   useEffect(() => {
     if (searchData) {
-      setFilteredPhotos((prevPhotos: any) => [...prevPhotos, ...searchData]);
+      setFilteredPhotos(() => [...searchData]);
     }
   }, [searchData, setFilteredPhotos]);
 

@@ -1,11 +1,16 @@
 import { Link } from "react-router-dom";
+import "./Navbar.scss";
 
 function Navbar() {
   return (
-    <div>
-      <Link to="/main">mainPage</Link>
+    <div className="navbar">
+      <Link to="/main">
+        <p>Main</p>
+      </Link>
 
-      <Link to="history">History</Link>
+      <Link to="history">
+        <p>History</p>
+      </Link>
     </div>
   );
 }

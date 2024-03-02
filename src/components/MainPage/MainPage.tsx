@@ -40,7 +40,6 @@ function MainPage({
   const [page, setPage] = useState<number>(1);
 
   //-----------------------------------------------------------------------//
-
   // // Fetch POPULAR images
   const { isPending, error, data } = useQuery({
     queryKey: ["popularPhotos", page],
@@ -136,14 +135,14 @@ function MainPage({
     };
   }, [setPage]);
 
-  // useEffect(() => {
-  //   const filteredScrollListener = () => handleFilteredScrollRef.current();
-  //   window.addEventListener("scroll", filteredScrollListener);
+  useEffect(() => {
+    const filteredScrollListener = () => handleFilteredScrollRef.current();
+    window.addEventListener("scroll", filteredScrollListener);
 
-  //   return () => {
-  //     window.removeEventListener("scroll", filteredScrollListener);
-  //   };
-  // }, [handleFilteredScrollRef]);
+    return () => {
+      window.removeEventListener("scroll", filteredScrollListener);
+    };
+  }, [handleFilteredScrollRef]);
 
   //find image with input search
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -168,7 +167,7 @@ function MainPage({
             onChange={handleSearch}
           />
         </div>
-        <Link to="/history" className="history-link">
+        <Link to="/history">
           <h2>Search history➡</h2>
         </Link>
       </section>
@@ -178,7 +177,7 @@ function MainPage({
           {((searchInput === "" ? popularPhotos : filteredPhotos) ?? []).map(
             (photo: Photo, index: number) => (
               <div
-                onClick={() => handleImageClick(photo.id)}
+                onClick={(e) => handleImageClick(photo.id, e)}
                 key={`${photo.id}-${index}`}
               >
                 <div className="img-container">

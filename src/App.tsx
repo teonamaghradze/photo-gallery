@@ -30,19 +30,16 @@ function App() {
   };
 
   //toggle modal image
-  const handleImageClick = (imageId: string) => {
+  const handleImageClick = (imageId: string, e: any) => {
     setCurrentImage(imageId);
-    setIsOpenModal((isOpen) => !isOpen);
+    setIsOpenModal((isOpen) => {
+      if (isOpen && !e.target.classList.contains("overlay")) {
+        return true;
+      }
+      return !isOpen;
+    });
   };
 
-  useEffect(() => {
-    const filteredScrollListener = () => handleFilteredScrollRef.current();
-    window.addEventListener("scroll", filteredScrollListener);
-
-    return () => {
-      window.removeEventListener("scroll", filteredScrollListener);
-    };
-  }, [handleFilteredScrollRef]);
   return (
     <>
       <QueryClientProvider client={queryClient}>
@@ -82,6 +79,11 @@ function App() {
                   setWordsArr={setWordsArr}
                   searchHistory={searchHistory}
                   handleFilteredScrollRef={handleFilteredScrollRef}
+                  handleImageClick={handleImageClick}
+                  isOpenModal={isOpenModal}
+                  currentImage={currentImage}
+                  statistics={statistics}
+                  seStatistics={setStatistics}
                 />
               }
             />

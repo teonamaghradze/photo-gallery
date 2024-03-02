@@ -1,8 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
-import { Link } from "react-router-dom";
 import { fetchSearchImages } from "../../services/api";
 import "./HistoryPage.scss";
+import Modal from "../../ui/Modal";
+import ImageCard from "../MainPage/ImageCard";
 
 function HistoryPage({
   wordsArr,
@@ -11,6 +12,10 @@ function HistoryPage({
   filteredImgPage,
   setWordsArr,
   searchHistory,
+  handleImageClick,
+  isOpenModal,
+  currentImage,
+  statistics,
 }: any) {
   const {
     data: searchData,
@@ -58,8 +63,23 @@ function HistoryPage({
       <div className="photo-grid">
         {searchData &&
           searchData.map((photo: any, index: number) => (
-            <div key={index} className="image-container">
-              <img src={photo.urls.small} alt={photo.alt_description} />
+            <div
+              onClick={(e) => handleImageClick(photo.id, e)}
+              key={`${photo.id}-${index}`}
+            >
+              <div className="image-container">
+                <img src={photo.urls.small} alt={photo.alt_description} />
+              </div>
+              <div>
+                {isOpenModal && currentImage === photo.id && (
+                  <Modal>
+                    <ImageCard
+                      photo={photo}
+                      statistics={statistics[photo.id]}
+                    />
+                  </Modal>
+                )}
+              </div>
             </div>
           ))}
       </div>

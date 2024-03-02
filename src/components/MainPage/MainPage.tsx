@@ -1,4 +1,3 @@
-import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import ImageCard from "./ImageCard";
 import Modal from "../../ui/Modal";
@@ -6,10 +5,11 @@ import "./MainPage.scss";
 import { handleScroll } from "../../services/helpers";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { fetchPopularPhotos, fetchSearchImages } from "../../services/api";
-
-const API_URL = "https://api.unsplash.com/photos";
-const API_KEY = process.env.REACT_APP_API_KEY;
+import {
+  fetchPhotoStatistics,
+  fetchPopularPhotos,
+  fetchSearchImages,
+} from "../../services/api";
 
 interface Photo {
   id: string;
@@ -27,20 +27,20 @@ function MainPage({
   filteredImgPage,
   setFilteredImgPage,
   setSearchHistory,
+  currentImage,
+  handleImageClick,
+  isOpenModal,
+
+  statistics,
+  setStatistics,
 }: any) {
   const [popularPhotos, setPopularPhotos] = useState<Photo[]>([]);
   const [filteredPhotos, setFilteredPhotos] = useState<Photo[]>([]);
 
   const [page, setPage] = useState<number>(1);
-
-  const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
-  const [currentImage, setCurrentImage] = useState<string | null>(null);
-  const [statistics, setStatistics] = useState<{ [id: string]: object }>({});
-
-  // const debouncedSearchInput = useDebounce<string>(searchInput);
-
-  // const handleScrollRef = useRef(handleScroll(setPage));
   const handleFilteredScrollRef = useRef(handleScroll(setFilteredImgPage));
+
+  //-----------------------------------------------------------------------//
 
   // // Fetch POPULAR images
   const { isPending, error, data } = useQuery({
@@ -56,8 +56,7 @@ function MainPage({
 
   //===================================================//
 
-  //FILTER DATA
-
+  //FILTER IMAGES
   const { data: searchData } = useQuery({
     queryKey: ["searchPhotos", debouncedSearchInput, filteredImgPage],
     queryFn: () => fetchSearchImages(debouncedSearchInput, filteredImgPage),
@@ -69,7 +68,7 @@ function MainPage({
       if (filteredImgPage === 1) {
         setFilteredPhotos(searchData);
       } else {
-        setFilteredPhotos((prevPhotos) => [...prevPhotos, ...searchData]);
+        setFilteredPhotos((prevPhotos: any) => [...prevPhotos, ...searchData]);
       }
     }
   }, [searchData, filteredImgPage]);
@@ -98,32 +97,21 @@ function MainPage({
   //=-------------------------------------------------------------------//
 
   // Fetch statistics for a photo
+
+  const { data: statisticsData } = useQuery({
+    queryKey: ["photoStatistics", currentImage],
+    queryFn: () => fetchPhotoStatistics(currentImage),
+    enabled: !!currentImage,
+  });
+
   useEffect(() => {
-    const fetchStatistics = async () => {
-      if (currentImage) {
-        try {
-          const response = await axios.get(
-            `${API_URL}/${currentImage}/statistics`,
-            {
-              headers: {
-                Authorization: `Client-ID ${API_KEY}`,
-              },
-            }
-          );
-
-          setStatistics((prevStats) => ({
-            ...prevStats,
-            [currentImage]: response.data,
-          }));
-          console.log(response.data);
-        } catch (error) {
-          console.error("Error fetching statistics:", error);
-        }
-      }
-    };
-
-    fetchStatistics();
-  }, [currentImage]);
+    if (statisticsData) {
+      setStatistics((prevStats: any) => ({
+        ...prevStats,
+        [currentImage]: statisticsData,
+      }));
+    }
+  }, [statisticsData, currentImage, setStatistics]);
 
   //--------------------------------------------------------------//
 
@@ -158,12 +146,6 @@ function MainPage({
     };
   }, []);
 
-  //toggle modal image
-  const handleImageClick = (imageId: string) => {
-    setCurrentImage(imageId);
-    setIsOpenModal((isOpen) => !isOpen);
-  };
-
   //find image with input search
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchInput(e.target.value);
@@ -177,7 +159,7 @@ function MainPage({
   return (
     <main>
       <section>
-        {/* <h1>Photo Gallery</h1> */}
+        <h1>Photo Gallery</h1>
 
         <div className="search-section">
           <input

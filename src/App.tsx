@@ -16,12 +16,21 @@ function App() {
   const debouncedSearchInput = useDebounce<string>(searchInput);
   const [filteredImgPage, setFilteredImgPage] = useState<number>(1);
   const [searchHistory, setSearchHistory] = useState<string[]>([]);
+  const [currentImage, setCurrentImage] = useState<string | null | any>(null);
+  const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
+  const [statistics, setStatistics] = useState<{ [id: string]: object }>({});
 
   //search images with rendered keywords
   const handleKeywordSearch = (e: React.MouseEvent<HTMLHeadingElement>) => {
     const keyword: string = e.currentTarget.textContent || "";
     console.log(keyword);
     setSearchInput(keyword);
+  };
+
+  //toggle modal image
+  const handleImageClick = (imageId: string) => {
+    setCurrentImage(imageId);
+    setIsOpenModal((isOpen) => !isOpen);
   };
 
   return (
@@ -42,6 +51,11 @@ function App() {
                   filteredImgPage={filteredImgPage}
                   setFilteredImgPage={setFilteredImgPage}
                   setSearchHistory={setSearchHistory}
+                  currentImage={currentImage}
+                  handleImageClick={handleImageClick}
+                  isOpenModal={isOpenModal}
+                  statistics={statistics}
+                  setStatistics={setStatistics}
                 />
               }
             />

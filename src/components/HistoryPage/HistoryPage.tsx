@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { fetchSearchImages } from "../../services/api";
 import "./HistoryPage.scss";
 
@@ -19,7 +19,6 @@ function HistoryPage({
   currentImage,
   statistics,
   setStatistics,
-  handleFilteredScrollRef,
   setFilteredPhotos,
 }: any) {
   const {
@@ -27,36 +26,17 @@ function HistoryPage({
     isLoading,
     isError,
   } = useQuery({
-    queryKey: ["searchPhotos", debouncedSearchInput, filteredImgPage],
+    queryKey: ["searchPhotos", debouncedSearchInput],
     queryFn: () => fetchSearchImages(debouncedSearchInput, filteredImgPage),
     retry: 3,
   });
 
-  const [historyImages, setHistoryImages] = useState<any>([]);
-
   // Handle search results
   useEffect(() => {
     if (searchData) {
-      if (filteredImgPage === 1) {
-        // setFilteredPhotos(searchData);
-        setHistoryImages(searchData);
-      } else {
-        console.log(1111);
-
-        setHistoryImages((prevPhotos: any) => [...prevPhotos, ...searchData]);
-      }
+      setFilteredPhotos((prevPhotos: any) => [...prevPhotos, ...searchData]);
     }
-  }, [searchData, filteredImgPage, setFilteredPhotos]);
-
-  //render inputed keywords
-  useEffect(() => {
-    const uniqueKeywords = Array.from(
-      new Set(searchHistory.map((keyword: any) => keyword.toLowerCase().trim()))
-    );
-    const word = uniqueKeywords.pop();
-
-    setWordsArr((prevWords: any) => [...prevWords, word]);
-  }, [searchHistory, setWordsArr]);
+  }, [searchData, setFilteredPhotos]);
 
   // Update search history
   useEffect(() => {
@@ -75,16 +55,6 @@ function HistoryPage({
 
   //INFINITE SCROLL
 
-  useEffect(() => {
-    const filteredScrollListener = () => handleFilteredScrollRef.current();
-
-    window.addEventListener("scroll", filteredScrollListener);
-
-    return () => {
-      window.removeEventListener("scroll", filteredScrollListener);
-    };
-  }, [handleFilteredScrollRef]);
-
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Error fetching data</div>;
 
@@ -99,7 +69,6 @@ function HistoryPage({
           </p>
         ))}
       </div>
-
       <PhotoGrid
         photos={searchData || []}
         handleImageClick={handleImageClick}

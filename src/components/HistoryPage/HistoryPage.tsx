@@ -1,22 +1,20 @@
-import { useQuery } from "@tanstack/react-query";
 import { useContext, useEffect, useState } from "react";
-import { fetchSearchImages } from "../../services/api";
 import "./HistoryPage.scss";
+import { useQuery } from "@tanstack/react-query";
+import { fetchSearchImages } from "../../services/api";
 import PhotoGrid from "../../ui/PhotoGrid";
 import { ImagesContext } from "../../context/context";
 import KeywordButton from "./KeywordButton";
+import { handleScroll } from "../../services/helpers";
 
 function HistoryPage() {
   const [filteredImgPage, setFilteredImgPage] = useState<number>(1);
 
-  const { setFilteredPhotos, debouncedSearchInput } = useContext(ImagesContext);
+  const { filteredPhotos, setFilteredPhotos, debouncedSearchInput } =
+    useContext(ImagesContext);
 
-  const {
-    data: searchData,
-    isLoading,
-    isError,
-  } = useQuery({
-    queryKey: ["searchPhotos", debouncedSearchInput],
+  const { data: searchData } = useQuery({
+    queryKey: ["searchPhotos", debouncedSearchInput, filteredImgPage],
     queryFn: () => fetchSearchImages(debouncedSearchInput, filteredImgPage),
     retry: 3,
   });
@@ -24,19 +22,32 @@ function HistoryPage() {
   // Handle search results
   useEffect(() => {
     if (searchData) {
-      setFilteredPhotos(() => [...searchData]);
+      if (filteredImgPage === 1) {
+        setFilteredPhotos(searchData);
+      } else {
+        setFilteredPhotos((prevPhotos: any) => [...prevPhotos, ...searchData]);
+      }
     }
-  }, [searchData, setFilteredPhotos]);
+  }, [searchData, setFilteredPhotos, filteredImgPage]);
 
-  //INFINITE SCROLL
-  if (isLoading) return <div>Loading...</div>;
-  if (isError) return <div>Error fetching data</div>;
+  // Handle infinite scroll
+  useEffect(() => {
+    const scrollHandler = handleScroll(() => {
+      setFilteredImgPage((prevPage) => prevPage + 1);
+    }, true);
+
+    window.addEventListener("scroll", scrollHandler);
+
+    return () => {
+      window.removeEventListener("scroll", scrollHandler);
+    };
+  }, []);
 
   return (
     <div className="history-container">
       <h1>History page</h1>
       <KeywordButton />
-      <PhotoGrid photos={searchData || []} />
+      <PhotoGrid photos={filteredPhotos || []} />
     </div>
   );
 }

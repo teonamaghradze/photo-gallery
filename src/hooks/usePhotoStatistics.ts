@@ -2,10 +2,7 @@ import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchPhotoStatistics } from "../services/api";
 
-function usePhotoStatistics(
-  currentImage: string | null | any,
-  setStatistics: Function
-) {
+function usePhotoStatistics(currentImage: string, setStatistics: Function) {
   const { data: statisticsData } = useQuery({
     queryKey: ["photoStatistics", currentImage],
     queryFn: () => fetchPhotoStatistics(currentImage),
@@ -14,7 +11,7 @@ function usePhotoStatistics(
 
   useEffect(() => {
     if (statisticsData) {
-      setStatistics((prevStats: any) => ({
+      setStatistics((prevStats: string[]) => ({
         ...prevStats,
         [currentImage]: statisticsData,
       }));

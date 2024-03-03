@@ -7,15 +7,7 @@ import { fetchPopularPhotos, fetchSearchImages } from "../../services/api";
 import PhotoGrid from "../../ui/PhotoGrid";
 import { ImagesContext } from "../../context/context";
 import Searchbar from "./Searchbar";
-
-interface Photo {
-  id: string;
-  urls: {
-    small: string;
-  };
-  alt_description: string;
-  likes: string;
-}
+import { Photo } from "../../interfaces/db_interfaces";
 
 function MainPage() {
   const [popularPhotos, setPopularPhotos] = useState<Photo[]>([]);
@@ -56,7 +48,10 @@ function MainPage() {
       if (filteredImgPage === 1) {
         setFilteredPhotos(searchData);
       } else {
-        setFilteredPhotos((prevPhotos: any) => [...prevPhotos, ...searchData]);
+        setFilteredPhotos((prevPhotos: string[]) => [
+          ...prevPhotos,
+          ...searchData,
+        ]);
       }
     }
   }, [searchData, filteredImgPage]);
@@ -65,7 +60,7 @@ function MainPage() {
     if (debouncedSearchInput) {
       // Fetch the first page of filtered images
       fetchSearchImages(debouncedSearchInput, 1);
-      setSearchHistory((prevHistory: any) => [
+      setSearchHistory((prevHistory: string[]) => [
         ...prevHistory,
         debouncedSearchInput.trim(),
       ]);

@@ -1,4 +1,7 @@
-export const handleScroll = (setPage: any, isFiltered: boolean) => {
+export const handleScroll = (
+  setPage: (updatePage: (prevPage: number) => number) => void,
+  isFiltered: boolean
+) => {
   return () => {
     const scrollTop =
       (document.documentElement && document.documentElement.scrollTop) ||
@@ -12,7 +15,7 @@ export const handleScroll = (setPage: any, isFiltered: boolean) => {
       Math.ceil(scrollTop + clientHeight) >= scrollHeight;
 
     if (scrolledToBottom) {
-      setPage((prevPage: any) => prevPage + 1);
+      setPage((prevPage: number) => prevPage + 1);
     }
   };
 };

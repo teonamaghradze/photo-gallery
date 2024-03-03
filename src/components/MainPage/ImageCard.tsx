@@ -1,18 +1,7 @@
+import { ImagesArray } from "../../interfaces/db_interfaces";
 import "./ImageCard.scss";
 
-interface ImageCardProps {
-  photo: any;
-  statistics?: {
-    views?: {
-      total: number;
-    };
-    downloads?: {
-      total: number;
-    };
-  };
-}
-
-const ImageCard: React.FC<ImageCardProps> = ({ photo, statistics }) => {
+const ImageCard = ({ photo, statistics }: ImagesArray) => {
   const viewsTotal = statistics?.views?.total || 0;
   const downloadsTotal = statistics?.downloads?.total || 0;
 

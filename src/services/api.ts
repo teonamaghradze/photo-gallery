@@ -2,7 +2,7 @@ import axios from "axios";
 
 const API_KEY = process.env.REACT_APP_API_KEY;
 
-export const fetchPopularPhotos = async (page: any) => {
+export const fetchPopularPhotos = async (page: number) => {
   try {
     const response = await axios.get("https://api.unsplash.com/photos", {
       params: {
@@ -39,7 +39,7 @@ export const fetchSearchImages = async (query: string, page: number) => {
   }
 };
 
-export const fetchPhotoStatistics = async (photoId: any) => {
+export const fetchPhotoStatistics = async (photoId: string) => {
   try {
     const response = await axios.get(
       `https://api.unsplash.com/photos/${photoId}/statistics`,

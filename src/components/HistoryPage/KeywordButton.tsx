@@ -8,7 +8,9 @@ function KeywordButton() {
   // Update search history
   useEffect(() => {
     const uniqueKeywords = Array.from(
-      new Set(searchHistory.map((keyword: any) => keyword.toLowerCase().trim()))
+      new Set(
+        searchHistory.map((keyword: string) => keyword.toLowerCase().trim())
+      )
     );
 
     setWordsArr(uniqueKeywords);
@@ -17,7 +19,6 @@ function KeywordButton() {
   //search images with rendered keywords
   const handleKeywordSearch = (e: React.MouseEvent<HTMLHeadingElement>) => {
     const keyword: string = e.currentTarget.textContent || "";
-    console.log(keyword);
     setSearchInput(keyword);
   };
 

@@ -25,7 +25,10 @@ function HistoryPage() {
       if (filteredImgPage === 1) {
         setFilteredPhotos(searchData);
       } else {
-        setFilteredPhotos((prevPhotos: any) => [...prevPhotos, ...searchData]);
+        setFilteredPhotos((prevPhotos: string[]) => [
+          ...prevPhotos,
+          ...searchData,
+        ]);
       }
     }
   }, [searchData, setFilteredPhotos, filteredImgPage]);

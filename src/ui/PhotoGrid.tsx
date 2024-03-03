@@ -4,8 +4,9 @@ import "./PhotoGrid.scss";
 import usePhotoStatistics from "../hooks/usePhotoStatistics";
 import { useContext, useEffect } from "react";
 import { ImagesContext } from "../context/context";
+import { Photo, PhotosArray } from "../interfaces/db_interfaces";
 
-function PhotoGrid({ photos }: any) {
+function PhotoGrid({ photos }: PhotosArray) {
   const {
     currentImage,
     statistics,
@@ -18,12 +19,20 @@ function PhotoGrid({ photos }: any) {
   usePhotoStatistics(currentImage, setStatistics);
 
   //toggle modal image
-  const handleImageClick = (imageId: string, e: any) => {
+  const handleImageClick = (
+    imageId: string,
+    e: React.MouseEvent<HTMLDivElement, MouseEvent>
+  ) => {
     setCurrentImage(imageId);
-    setIsOpenModal((isOpen: any) => {
-      if (isOpen && !e.target.classList.contains("overlay")) {
-        return true;
+    setIsOpenModal((isOpen: boolean) => {
+      const { target } = e;
+      if (target instanceof HTMLElement) {
+        const classList = target.classList; // DOMTokenList
+        if (isOpen && !classList.contains("overlay")) {
+          return true;
+        }
       }
+
       return !isOpen;
     });
   };
@@ -40,7 +49,7 @@ function PhotoGrid({ photos }: any) {
 
   return (
     <div className="photo-grid">
-      {photos.map((photo: any, index: any) => (
+      {photos.map((photo: Photo, index: number) => (
         <div
           onClick={(e) => handleImageClick(photo.id, e)}
           key={`${photo.id}-${index}`}

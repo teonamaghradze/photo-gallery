@@ -1,4 +1,4 @@
-import React, { createContext, useState } from "react";
+import { createContext, useState } from "react";
 import useDebounce from "../components/MainPage/hooks/useDebounce";
 
 export const ImagesContext = createContext<any>(null);
@@ -10,6 +10,7 @@ export const ImagesProvider = ({ children }: any) => {
   const [searchHistory, setSearchHistory] = useState<string[]>([]);
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
   const [filteredPhotos, setFilteredPhotos] = useState<any[]>([]);
+  const [wordsArr, setWordsArr] = useState<any[]>([]);
 
   const debouncedSearchInput = useDebounce<string>(searchInput);
 
@@ -27,6 +28,8 @@ export const ImagesProvider = ({ children }: any) => {
     filteredPhotos,
     setFilteredPhotos,
     debouncedSearchInput,
+    wordsArr,
+    setWordsArr,
   };
 
   return (

@@ -4,7 +4,6 @@ import { handleScroll } from "../../services/helpers";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { fetchPopularPhotos, fetchSearchImages } from "../../services/api";
-import usePhotoStatistics from "../../hooks/usePhotoStatistics";
 import PhotoGrid from "../../ui/PhotoGrid";
 import { ImagesContext } from "../../context/context";
 
@@ -17,7 +16,7 @@ interface Photo {
   likes: string;
 }
 
-function MainPage({ debouncedSearchInput, handleImageClick }: any) {
+function MainPage() {
   const [popularPhotos, setPopularPhotos] = useState<Photo[]>([]);
   const [page, setPage] = useState<number>(1);
   const [filteredImgPage, setFilteredImgPage] = useState<number>(1);
@@ -27,6 +26,7 @@ function MainPage({ debouncedSearchInput, handleImageClick }: any) {
     searchInput,
     filteredPhotos,
     setFilteredPhotos,
+    debouncedSearchInput,
   } = useContext(ImagesContext);
 
   //-----------------------------------------------------------------------//
@@ -129,7 +129,6 @@ function MainPage({ debouncedSearchInput, handleImageClick }: any) {
       <section>
         <PhotoGrid
           photos={searchInput === "" ? popularPhotos : filteredPhotos}
-          handleImageClick={handleImageClick}
         />
       </section>
     </main>

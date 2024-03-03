@@ -5,15 +5,17 @@ import "./HistoryPage.scss";
 import PhotoGrid from "../../ui/PhotoGrid";
 import { ImagesContext } from "../../context/context";
 
-function HistoryPage({
-  handleKeywordSearch,
-  debouncedSearchInput,
-
-  handleImageClick,
-}: any) {
+function HistoryPage() {
   const [filteredImgPage, setFilteredImgPage] = useState<number>(1);
+
   const [wordsArr, setWordsArr] = useState<any[]>([]);
-  const { searchHistory, setFilteredPhotos } = useContext(ImagesContext);
+  const {
+    searchHistory,
+    setFilteredPhotos,
+    setSearchInput,
+    debouncedSearchInput,
+  } = useContext(ImagesContext);
+
   const {
     data: searchData,
     isLoading,
@@ -40,6 +42,13 @@ function HistoryPage({
     setWordsArr(uniqueKeywords);
   }, [searchHistory, setWordsArr]);
 
+  //search images with rendered keywords
+  const handleKeywordSearch = (e: React.MouseEvent<HTMLHeadingElement>) => {
+    const keyword: string = e.currentTarget.textContent || "";
+    console.log(keyword);
+    setSearchInput(keyword);
+  };
+
   //INFINITE SCROLL
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Error fetching data</div>;
@@ -55,10 +64,7 @@ function HistoryPage({
           </p>
         ))}
       </div>
-      <PhotoGrid
-        photos={searchData || []}
-        handleImageClick={handleImageClick}
-      />
+      <PhotoGrid photos={searchData || []} />
     </div>
   );
 }

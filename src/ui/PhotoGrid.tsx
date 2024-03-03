@@ -5,11 +5,28 @@ import usePhotoStatistics from "../hooks/usePhotoStatistics";
 import { useContext, useEffect } from "react";
 import { ImagesContext } from "../context/context";
 
-function PhotoGrid({ photos, handleImageClick }: any) {
-  const { currentImage, statistics, setStatistics, isOpenModal } =
-    useContext(ImagesContext);
+function PhotoGrid({ photos }: any) {
+  const {
+    currentImage,
+    statistics,
+    setStatistics,
+    isOpenModal,
+    setIsOpenModal,
+    setCurrentImage,
+  } = useContext(ImagesContext);
 
   usePhotoStatistics(currentImage, setStatistics);
+
+  //toggle modal image
+  const handleImageClick = (imageId: string, e: any) => {
+    setCurrentImage(imageId);
+    setIsOpenModal((isOpen: any) => {
+      if (isOpen && !e.target.classList.contains("overlay")) {
+        return true;
+      }
+      return !isOpen;
+    });
+  };
 
   //--------------------------------------------------------------//
   //hide scroll while modal is open

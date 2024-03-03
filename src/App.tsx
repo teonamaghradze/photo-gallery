@@ -21,24 +21,6 @@ function App() {
 
   const debouncedSearchInput = useDebounce<string>(searchInput);
 
-  //search images with rendered keywords
-  const handleKeywordSearch = (e: React.MouseEvent<HTMLHeadingElement>) => {
-    const keyword: string = e.currentTarget.textContent || "";
-    console.log(keyword);
-    setSearchInput(keyword);
-  };
-
-  //toggle modal image
-  const handleImageClick = (imageId: string, e: any) => {
-    setCurrentImage(imageId);
-    setIsOpenModal((isOpen) => {
-      if (isOpen && !e.target.classList.contains("overlay")) {
-        return true;
-      }
-      return !isOpen;
-    });
-  };
-
   return (
     <>
       <QueryClientProvider client={queryClient}>
@@ -55,31 +37,17 @@ function App() {
             isOpenModal,
             filteredPhotos,
             setFilteredPhotos,
+            setIsOpenModal,
+            setCurrentImage,
+            debouncedSearchInput,
           }}
         >
           <BrowserRouter>
             <Navbar />
             <Routes>
               <Route path="/" element={<Navigate to="/main" />} />
-              <Route
-                path="/main"
-                element={
-                  <MainPage
-                    debouncedSearchInput={debouncedSearchInput}
-                    handleImageClick={handleImageClick}
-                  />
-                }
-              />
-              <Route
-                path="/history"
-                element={
-                  <HistoryPage
-                    handleKeywordSearch={handleKeywordSearch}
-                    debouncedSearchInput={debouncedSearchInput}
-                    handleImageClick={handleImageClick}
-                  />
-                }
-              />
+              <Route path="/main" element={<MainPage />} />
+              <Route path="/history" element={<HistoryPage />} />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </BrowserRouter>

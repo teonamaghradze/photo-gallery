@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchPopularPhotos, fetchSearchImages } from "../../services/api";
 import PhotoGrid from "../../ui/PhotoGrid";
 import { ImagesContext } from "../../context/context";
+import Searchbar from "./Searchbar";
 
 interface Photo {
   id: string;
@@ -22,7 +23,6 @@ function MainPage() {
   const [filteredImgPage, setFilteredImgPage] = useState<number>(1);
   const {
     setSearchHistory,
-    setSearchInput,
     searchInput,
     filteredPhotos,
     setFilteredPhotos,
@@ -31,16 +31,16 @@ function MainPage() {
 
   //-----------------------------------------------------------------------//
   // // Fetch POPULAR images
-  const { isPending, error, data } = useQuery({
+  const { data: imagesData } = useQuery({
     queryKey: ["popularPhotos", page],
     queryFn: () => fetchPopularPhotos(page),
   });
 
   useEffect(() => {
-    if (data) {
-      setPopularPhotos((prevPhotos) => [...prevPhotos, ...data]);
+    if (imagesData) {
+      setPopularPhotos((prevPhotos) => [...prevPhotos, ...imagesData]);
     }
-  }, [data]);
+  }, [imagesData]);
 
   //===================================================//
 
@@ -83,7 +83,6 @@ function MainPage() {
   }, [filteredImgPage, debouncedSearchInput]);
 
   //INFINITE SCROLL
-
   useEffect(() => {
     const popularScrollHandler = handleScroll(setPage, false);
     const filteredScrollHandler = handleScroll(setFilteredImgPage, true);
@@ -97,30 +96,12 @@ function MainPage() {
     };
   }, []);
 
-  //find image with input search
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    e.preventDefault();
-    setSearchInput(e.target.value);
-    const filtered = data.filter((photo: any) =>
-      photo.alt_description.toLowerCase().includes(e.target.value.toLowerCase())
-    );
-
-    setFilteredPhotos(filtered);
-  };
-
   return (
     <main>
       <section>
         <h1>Photo Gallery</h1>
 
-        <div className="search-section">
-          <input
-            type="search"
-            placeholder="🔎  Search for images "
-            className="search-input"
-            onChange={handleSearch}
-          />
-        </div>
+        <Searchbar imagesData={imagesData} />
         <Link to="/history">
           <h2>Search history➡</h2>
         </Link>
